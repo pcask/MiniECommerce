@@ -1,4 +1,4 @@
-using MiniECommerce.Persistence;
+﻿using MiniECommerce.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +9,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// PostgreSql kullanımı için yazmış olduğumuz extension method;
 builder.Services.ConfigureNpgSql(builder.Configuration);
 
 var app = builder.Build();
