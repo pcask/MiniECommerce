@@ -12,6 +12,17 @@ builder.Services.AddSwaggerGen();
 // PostgreSql kullanımı için yazmış olduğumuz extension method;
 builder.Services.ConfigureNpgSql(builder.Configuration);
 
+// Repository kullanımı için yazmış olduğumuz extension method;
+builder.Services.ConfigureRepositories();
+
+// CORS Policy'lerin belirlenmesi;
+builder.Services.AddCors(corsOptions => corsOptions.AddDefaultPolicy(corsPolicyBuilder =>
+    corsPolicyBuilder
+    .WithOrigins("http://localhost:4200", "https://localhost:4200")
+    .AllowAnyHeader()
+    .AllowAnyMethod()
+));
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -21,6 +32,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+
+app.UseCors();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();

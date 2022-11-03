@@ -39,6 +39,12 @@ namespace MiniECommerce.Persistence.Repositories
             return entry.State == EntityState.Deleted;
         }
 
+        public async Task<bool> RemoveAsync(string id)
+        {
+            T entity = await Table.FirstOrDefaultAsync(e => e.Id == Guid.Parse(id));
+            return Remove(entity);
+        }
+
         public void RemoveRange(T entities)
             => Table.RemoveRange(entities);
 
@@ -50,5 +56,6 @@ namespace MiniECommerce.Persistence.Repositories
 
         public async Task<int> SaveAsync()
             => await _context.SaveChangesAsync();
+
     }
 }
