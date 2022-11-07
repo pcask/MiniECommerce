@@ -1,10 +1,21 @@
-﻿using MiniECommerce.Persistence;
+﻿using FluentValidation;
+using FluentValidation.AspNetCore;
+using MiniECommerce.Application.Validations.FluentValidation.Validators;
+using MiniECommerce.Infrastructure.Filters;
+using MiniECommerce.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// API'ımıza oluşturduğumuz Filter'ı ekliyor ve Default olan ModelStateInvalidFilter'ı eziyoruz.
+builder.Services.AddControllers(options => options.Filters.Add<ValidationFilter>())
+    .ConfigureApiBehaviorOptions(options => options.SuppressModelStateInvalidFilter = true);
 
-builder.Services.AddControllers();
+// Fluent Validation'ı ekliyoruz;
+builder.Services.AddFluentValidationAutoValidation();
+
+builder.Services.AddValidatorsFromAssemblyContaining<CreateProductValidator>();
+
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
