@@ -20,4 +20,8 @@
     <ProjectReference Include="..\..\Infrastructure\MiniECommerce.Persistence\MiniECommerce.Persistence.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+
 </Project>
