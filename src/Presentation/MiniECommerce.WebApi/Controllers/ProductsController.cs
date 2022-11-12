@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MiniECommerce.Application.Repositories.NProduct;
+using MiniECommerce.Application.Repositories.NProductImageFile;
 using MiniECommerce.Application.RequestParameters;
+using MiniECommerce.Application.Services;
 using MiniECommerce.Application.ViewModels.Products;
 using MiniECommerce.Domain.Entities;
 using System.Net;
@@ -14,13 +16,19 @@ namespace MiniECommerce.WebApi.Controllers
     {
         private readonly IProductReadRepository _productReadRepository;
         private readonly IProductWriteRepository _productWriteRepository;
-        private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IFileService _fileService;
+        private readonly IProductImageFileWriteRepository _productImageFileWriteRepository;
 
-        public ProductsController(IProductReadRepository productReadRepository, IProductWriteRepository productWriteRepository, IWebHostEnvironment webHostEnvironment)
+        public ProductsController(
+                IProductReadRepository productReadRepository,
+                IProductWriteRepository productWriteRepository,
+                IFileService fileService,
+                IProductImageFileWriteRepository productImageFileWriteRepository)
         {
             _productWriteRepository = productWriteRepository;
             _productReadRepository = productReadRepository;
-            _webHostEnvironment = webHostEnvironment;
+            _fileService = fileService;
+            _productImageFileWriteRepository = productImageFileWriteRepository;
         }
 
         [HttpGet]
@@ -86,20 +94,15 @@ namespace MiniECommerce.WebApi.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> Upload()
         {
-            string path = Path.Combine(_webHostEnvironment.WebRootPath, "resource/product/images");
+            var datas = await _fileService.UploadAsync("resources/product/images", Request.Form.Files);
 
-            if (!Directory.Exists(path))
-                Directory.CreateDirectory(path);
-
-            foreach (IFormFile file in Request.Form.Files)
+            await _productImageFileWriteRepository.AddRangeAsync(datas.Select(d => new ProductImageFile()
             {
-                string fullPath = Path.Combine(path, $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}");
+                FileName = d.name,
+                Path = d.path
+            }).ToList());
 
-                using FileStream fileStream = new FileStream(fullPath, FileMode.Create, FileAccess.Write, FileShare.None, 1024 * 1024, useAsync: false);
-
-                await file.CopyToAsync(fileStream);
-                await fileStream.FlushAsync();
-            }
+            await _productImageFileWriteRepository.SaveAsync();
             return Ok();
         }
     }

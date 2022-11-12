@@ -19,6 +19,9 @@ namespace MiniECommerce.Persistence.Contexts
         public DbSet<Order> Orders { get; set; }
         public DbSet<Customer> Customers { get; set; }
 
+        public DbSet<Domain.Entities.File> Files { get; set; }
+        public DbSet<InvoiceFile> InvoiceFiles { get; set; }
+        public DbSet<ProductImageFile> ProductImageFiles { get; set; }
 
         // Entity'lerimizin bazı property'lerinin otomatik olarak değer atamasını yapmak için merkezi bir yerden müdahele edebiliriz.
         // Böyle bir senaryo için DbContext'in SaveChanges method'ını override ederek bir nevi interceptor yazmış oluyoruz.

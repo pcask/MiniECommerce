@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using FluentValidation.AspNetCore;
 using MiniECommerce.Application.Validations.FluentValidation.Validators;
+using MiniECommerce.Infrastructure;
 using MiniECommerce.Infrastructure.Filters;
 using MiniECommerce.Persistence;
 
@@ -23,8 +24,9 @@ builder.Services.AddSwaggerGen();
 // PostgreSql kullanımı için yazmış olduğumuz extension method;
 builder.Services.ConfigureNpgSql(builder.Configuration);
 
-// Repository kullanımı için yazmış olduğumuz extension method;
-builder.Services.ConfigureRepositories();
+// Service'lerin kullanımı için yazmış olduğumuz extension method'lar;
+builder.Services.AddPersistenceServices();
+builder.Services.AddInfrastructureServices();
 
 // CORS Policy'lerin belirlenmesi;
 builder.Services.AddCors(corsOptions => corsOptions.AddDefaultPolicy(corsPolicyBuilder =>
