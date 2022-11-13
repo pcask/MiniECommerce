@@ -3,6 +3,7 @@ using FluentValidation.AspNetCore;
 using MiniECommerce.Application.Validations.FluentValidation.Validators;
 using MiniECommerce.Infrastructure;
 using MiniECommerce.Infrastructure.Filters;
+using MiniECommerce.Infrastructure.Services.Storage.Local;
 using MiniECommerce.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -27,6 +28,7 @@ builder.Services.ConfigureNpgSql(builder.Configuration);
 // Service'lerin kullanımı için yazmış olduğumuz extension method'lar;
 builder.Services.AddPersistenceServices();
 builder.Services.AddInfrastructureServices();
+builder.Services.AddStorage<LocalStorage>();
 
 // CORS Policy'lerin belirlenmesi;
 builder.Services.AddCors(corsOptions => corsOptions.AddDefaultPolicy(corsPolicyBuilder =>

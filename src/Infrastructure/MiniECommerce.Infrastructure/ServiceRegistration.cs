@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using MiniECommerce.Application.Services;
+using MiniECommerce.Application.Abstractions.Storage;
 using MiniECommerce.Infrastructure.Services;
+using MiniECommerce.Infrastructure.Services.Storage;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,12 @@ namespace MiniECommerce.Infrastructure
     {
         public static void AddInfrastructureServices(this IServiceCollection services)
         {
-            services.AddScoped<IFileService, FileService>();
+            services.AddScoped<IStorageService, StorageService>();
+        }
+
+        public static void AddStorage<T>(this IServiceCollection services) where T : class, IStorage
+        {
+            services.AddScoped<IStorage, T>();
         }
     }
 }

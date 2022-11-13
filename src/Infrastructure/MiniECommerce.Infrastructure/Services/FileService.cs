@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using MiniECommerce.Application.Services;
 using MiniECommerce.Infrastructure.Operations;
 using System;
 using System.Collections.Generic;
@@ -10,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace MiniECommerce.Infrastructure.Services
 {
-    public class FileService : IFileService
+    public class FileService
     {
         private readonly IWebHostEnvironment _webHostEnvironment;
 
