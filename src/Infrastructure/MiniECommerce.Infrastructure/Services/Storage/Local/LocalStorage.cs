@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace MiniECommerce.Infrastructure.Services.Storage.Local
 {
-    public class LocalStorage : ILocalStorage
+    public class LocalStorage : StorageBase, ILocalStorage
     {
         private readonly IWebHostEnvironment _webHostEnvironment;
 
@@ -50,10 +50,7 @@ namespace MiniECommerce.Infrastructure.Services.Storage.Local
 
             foreach (IFormFile file in files)
             {
-                //todo RenameAsync method'ı tüm storage mimarisinin ihtiyaçlarını karşılayacak şekilde tekrar yazılacak.
-                //string newName = await RenameAsync(file.FileName, path);
-                string newName = file.FileName;
-
+                string newName = await RenameAsync(file.FileName, path, HasFile);
                 string fullPath = Path.Combine(path, newName);
 
                 datas.Add((directoryPath, newName));

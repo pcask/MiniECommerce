@@ -3,6 +3,7 @@ using FluentValidation.AspNetCore;
 using MiniECommerce.Application.Validations.FluentValidation.Validators;
 using MiniECommerce.Infrastructure;
 using MiniECommerce.Infrastructure.Filters;
+using MiniECommerce.Infrastructure.Services.Storage.Azure;
 using MiniECommerce.Infrastructure.Services.Storage.Local;
 using MiniECommerce.Persistence;
 
@@ -28,6 +29,8 @@ builder.Services.ConfigureNpgSql(builder.Configuration);
 // Service'lerin kullanımı için yazmış olduğumuz extension method'lar;
 builder.Services.AddPersistenceServices();
 builder.Services.AddInfrastructureServices();
+
+//builder.Services.AddStorage<AzureStorage>();
 builder.Services.AddStorage<LocalStorage>();
 
 // CORS Policy'lerin belirlenmesi;
