@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MiniECommerce.Application.Abstractions.Storage;
+using MiniECommerce.Application.Features.Commands.CreateProduct;
+using MiniECommerce.Application.Features.Queries.GetAllProducts;
 using MiniECommerce.Application.Repositories.NProduct;
 using MiniECommerce.Application.Repositories.NProductImageFile;
 using MiniECommerce.Application.RequestParameters;
@@ -21,56 +24,36 @@ namespace MiniECommerce.WebApi.Controllers
         private readonly IStorageService _storageService;
         private readonly IConfiguration _configuration;
 
+        private readonly IMediator _mediator;
+
         public ProductsController(
                 IProductReadRepository productReadRepository,
                 IProductWriteRepository productWriteRepository,
                 IProductImageFileWriteRepository productImageFileWriteRepository,
                 IStorageService storageService,
-                IConfiguration configuration)
+                IConfiguration configuration,
+                IMediator mediator)
         {
             _productWriteRepository = productWriteRepository;
             _productReadRepository = productReadRepository;
             _productImageFileWriteRepository = productImageFileWriteRepository;
             _storageService = storageService;
             _configuration = configuration;
+            _mediator = mediator;
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get([FromQuery] Pagination pagination)
+        public async Task<IActionResult> Get([FromQuery] GetAllProductsQueryRequest getAllProductsQueryRequest)
         {
-            var totalCount = _productReadRepository.GetAll(tracking: false).Count();
-            var products = _productReadRepository.GetAll(tracking: false)
-                .Skip(pagination.Page * pagination.Size)
-                .Take(pagination.Size)
-                .Select(p => new
-                {
-                    p.Id,
-                    p.Name,
-                    p.AmountOfStock,
-                    p.Price,
-                    p.CreatedDate,
-                    p.UpdatedDate
-                }).ToList();
-
-            return Ok(new
-            {
-                totalCount,
-                products
-            });
+            GetAllProductsQueryResponse response = await _mediator.Send(getAllProductsQueryRequest);
+            return Ok(response);
         }
 
 
         [HttpPost]
-        public async Task<IActionResult> Post(VM_Create_Product model)
+        public async Task<IActionResult> Post(CreateProductCommandRequest request)
         {
-            await _productWriteRepository.AddAsync(new()
-            {
-                Name = model.Name,
-                AmountOfStock = model.AmountOfStock,
-                Price = model.Price
-            });
-
-            await _productWriteRepository.SaveAsync();
+            CreateProductCommandResponse response = await _mediator.Send(request);
 
             return StatusCode((int)HttpStatusCode.Created);
         }

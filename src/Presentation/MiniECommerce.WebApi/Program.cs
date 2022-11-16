@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using FluentValidation.AspNetCore;
+using MiniECommerce.Application;
 using MiniECommerce.Application.Validations.FluentValidation.Validators;
 using MiniECommerce.Infrastructure;
 using MiniECommerce.Infrastructure.Filters;
@@ -29,6 +30,7 @@ builder.Services.ConfigureNpgSql(builder.Configuration);
 // Service'lerin kullanımı için yazmış olduğumuz extension method'lar;
 builder.Services.AddPersistenceServices();
 builder.Services.AddInfrastructureServices();
+builder.Services.AddApplicationServices();
 
 //builder.Services.AddStorage<AzureStorage>();
 builder.Services.AddStorage<LocalStorage>();
