@@ -57,7 +57,7 @@ namespace MiniECommerce.Infrastructure.Services.Storage.Azure
             {
                 string newName = await RenameAsync(file.FileName, containerName, HasFile);
                 await _blobContainerClient.UploadBlobAsync(newName, file.OpenReadStream());
-                datas.Add((newName, containerName));
+                datas.Add((newName, $"{containerName}/{newName}"));
             }
 
             return datas;

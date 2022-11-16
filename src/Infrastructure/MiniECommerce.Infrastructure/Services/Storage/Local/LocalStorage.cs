@@ -46,14 +46,14 @@ namespace MiniECommerce.Infrastructure.Services.Storage.Local
                 Directory.CreateDirectory(path);
 
             List<bool> results = new();
-            List<(string path, string name)> datas = new();
+            List<(string name, string path) > datas = new();
 
             foreach (IFormFile file in files)
             {
                 string newName = await RenameAsync(file.FileName, path, HasFile);
                 string fullPath = Path.Combine(path, newName);
 
-                datas.Add((directoryPath, newName));
+                datas.Add((newName, directoryPath));
 
                 bool result = await CopyAsync(fullPath, file);
                 results.Add(result);

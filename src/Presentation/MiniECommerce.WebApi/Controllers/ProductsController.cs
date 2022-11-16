@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using MiniECommerce.Application.Abstractions.Storage;
 using MiniECommerce.Application.Repositories.NProduct;
 using MiniECommerce.Application.Repositories.NProductImageFile;
@@ -18,17 +19,20 @@ namespace MiniECommerce.WebApi.Controllers
         private readonly IProductWriteRepository _productWriteRepository;
         private readonly IProductImageFileWriteRepository _productImageFileWriteRepository;
         private readonly IStorageService _storageService;
+        private readonly IConfiguration _configuration;
 
         public ProductsController(
                 IProductReadRepository productReadRepository,
                 IProductWriteRepository productWriteRepository,
                 IProductImageFileWriteRepository productImageFileWriteRepository,
-                IStorageService storageService)
+                IStorageService storageService,
+                IConfiguration configuration)
         {
             _productWriteRepository = productWriteRepository;
             _productReadRepository = productReadRepository;
             _productImageFileWriteRepository = productImageFileWriteRepository;
             _storageService = storageService;
+            _configuration = configuration;
         }
 
         [HttpGet]
@@ -92,18 +96,51 @@ namespace MiniECommerce.WebApi.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> Upload()
+        public async Task<IActionResult> Upload(string id)
         {
             var datas = await _storageService.UploadAsync("resources/product/images", Request.Form.Files);
+
+            Product product = await _productReadRepository.GetByIdAsync(id);
 
             await _productImageFileWriteRepository.AddRangeAsync(datas.Select(d => new ProductImageFile()
             {
                 FileName = d.fileName,
                 Path = d.pathOrContainerName,
-                Storage = _storageService.StorageName
+                Storage = _storageService.StorageName,
+                Products = new List<Product>() { product }
             }).ToList());
 
             await _productImageFileWriteRepository.SaveAsync();
+            return Ok();
+        }
+
+        [HttpGet("[action]/{id}")]
+        public async Task<IActionResult> GetImages(string id)
+        {
+            Product? product = await _productReadRepository.Table
+                .Include(p => p.ProductImageFiles)
+                .FirstOrDefaultAsync(p => p.Id == Guid.Parse(id));
+
+
+            return Ok(product.ProductImageFiles.Select(i => new
+            {
+                i.Id,
+                i.FileName,
+                Path = i.Path = $"{_configuration["StorageBaseURL"]}/{i.FileName}",
+                i.CreatedDate
+            }));
+        }
+
+        [HttpDelete("[action]/{id}")]
+        public async Task<IActionResult> DeleteImage(string id, string imageId)
+        {
+            Product? product = await _productReadRepository.Table
+                .Include(p => p.ProductImageFiles)
+                .FirstOrDefaultAsync(p => p.Id == Guid.Parse(id));
+
+            product.ProductImageFiles.Remove(product.ProductImageFiles.FirstOrDefault(i => i.Id == Guid.Parse(imageId)));
+
+            await _productWriteRepository.SaveAsync();
             return Ok();
         }
     }
