@@ -7,6 +7,7 @@ using MiniECommerce.Application.Repositories.NInvoiceFile;
 using MiniECommerce.Application.Repositories.NOrder;
 using MiniECommerce.Application.Repositories.NProduct;
 using MiniECommerce.Application.Repositories.NProductImageFile;
+using MiniECommerce.Domain.Entities.Identity;
 using MiniECommerce.Persistence.Contexts;
 using MiniECommerce.Persistence.Repositories.NCustomer;
 using MiniECommerce.Persistence.Repositories.NFile;
@@ -32,6 +33,8 @@ namespace MiniECommerce.Persistence
 
         public static void AddPersistenceServices(this IServiceCollection services)
         {
+            services.AddIdentity<AppUser, AppRole>().AddEntityFrameworkStores<MiniECommerceDbContext>();
+
             services.AddScoped<ICustomerReadRepository, CustomerReadRepository>();
             services.AddScoped<ICustomerWriteRepository, CustomerWriteRepository>();
             services.AddScoped<IOrderReadRepository, OrderReadRepository>();

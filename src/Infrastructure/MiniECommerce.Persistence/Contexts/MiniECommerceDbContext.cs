@@ -1,6 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using MiniECommerce.Domain.Entities;
 using MiniECommerce.Domain.Entities.Common;
+using MiniECommerce.Domain.Entities.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace MiniECommerce.Persistence.Contexts
 {
-    public class MiniECommerceDbContext : DbContext
+    public class MiniECommerceDbContext : IdentityDbContext<AppUser, AppRole, string>
     {
         public MiniECommerceDbContext(DbContextOptions options) : base(options)
         {
