@@ -1,5 +1,7 @@
 ﻿using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using MiniECommerce.Application;
 using MiniECommerce.Application.Validations.FluentValidation.Validators;
 using MiniECommerce.Infrastructure;
@@ -7,6 +9,7 @@ using MiniECommerce.Infrastructure.Filters;
 using MiniECommerce.Infrastructure.Services.Storage.Azure;
 using MiniECommerce.Infrastructure.Services.Storage.Local;
 using MiniECommerce.Persistence;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,6 +46,26 @@ builder.Services.AddCors(corsOptions => corsOptions.AddDefaultPolicy(corsPolicyB
     .AllowAnyMethod()
 ));
 
+// Request'lerle gelen token'ın (JWT) doğrulanması için gerekli konfigürasyonlar
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer("Admin", options =>
+    {
+        options.TokenValidationParameters = new()
+        {
+            // Token'ımız doğrulanırken hangi kriterlerin baz alınacağını belirliyoruz.
+            ValidateAudience = true,
+            ValidateIssuer = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+
+            // Token'ımız doğrulanırken yukarıdaki kriterlere karşılık gelecek değerleri belirliyoruz.
+            ValidAudience = builder.Configuration["Token:Audience"],
+            ValidIssuer = builder.Configuration["Token:Issuer"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Token:SecurityKey"]))
+        };
+    });
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -55,6 +78,9 @@ if (app.Environment.IsDevelopment())
 app.UseStaticFiles();
 app.UseCors();
 app.UseHttpsRedirection();
+
+// Authorize attribute'ü ile işaretlediğimiz controller veya method'ların authentication işlemlerini aktifleştirmek için; 
+app.UseAuthentication();
 
 app.UseAuthorization();
 

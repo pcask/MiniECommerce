@@ -33,7 +33,10 @@ namespace MiniECommerce.Persistence
 
         public static void AddPersistenceServices(this IServiceCollection services)
         {
-            services.AddIdentity<AppUser, AppRole>().AddEntityFrameworkStores<MiniECommerceDbContext>();
+            services.AddIdentity<AppUser, AppRole>(options =>
+            {
+                options.User.RequireUniqueEmail = true;
+            }).AddEntityFrameworkStores<MiniECommerceDbContext>();
 
             services.AddScoped<ICustomerReadRepository, CustomerReadRepository>();
             services.AddScoped<ICustomerWriteRepository, CustomerWriteRepository>();

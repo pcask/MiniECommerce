@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MiniECommerce.Application.Features.Commands.NProduct.CreateProduct;
 using MiniECommerce.Application.Features.Commands.NProduct.DeleteProduct;
@@ -13,6 +14,7 @@ namespace MiniECommerce.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes ="Admin")]
     public class ProductsController : ControllerBase
     {
         private readonly IMediator _mediator;
