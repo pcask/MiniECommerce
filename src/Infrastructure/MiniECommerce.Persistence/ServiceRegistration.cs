@@ -36,6 +36,7 @@ namespace MiniECommerce.Persistence
             services.AddIdentity<AppUser, AppRole>(options =>
             {
                 options.User.RequireUniqueEmail = true;
+                options.Password.RequireNonAlphanumeric = false;
             }).AddEntityFrameworkStores<MiniECommerceDbContext>();
 
             services.AddScoped<ICustomerReadRepository, CustomerReadRepository>();

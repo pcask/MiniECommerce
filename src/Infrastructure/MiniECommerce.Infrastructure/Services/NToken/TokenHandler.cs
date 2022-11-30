@@ -30,7 +30,7 @@ namespace MiniECommerce.Infrastructure.Services.NToken
 
             token.Expiration = DateTime.UtcNow.AddMinutes(minute);
 
-            // Hangi değerlerle göre token doğrulaması yapılacağını belirlediysek aynı değerlerle de token'ımızı oluşturuyoruz.
+            // Hangi değerlere göre token doğrulaması yapılacağını belirlediysek aynı değerlerle de token'ımızı oluşturuyoruz.
             JwtSecurityToken securityToken = new(
                 audience: _configuration["Token:Audience"],
                 issuer: _configuration["Token:Issuer"],

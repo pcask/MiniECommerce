@@ -15,12 +15,29 @@ namespace MiniECommerce.Application.Features.Commands.NAppUser.CreateUser
 
         public async Task<CreateUserCommandResponse> Handle(CreateUserCommandRequest request, CancellationToken cancellationToken)
         {
-            IdentityResult result = await _userManager.CreateAsync(new()
+            if (request.Password != request.RePassword)
+                throw new Exception("Password mismatch");
+
+
+            IdentityResult result = null;
+
+            var user = await _userManager.FindByEmailAsync(request.Email);
+
+            // Kullanıcı hesap açmadan önce sosyal medyadan giriş yaptıysa ve daha sonra hesap oluşturmak isterse, şifre ataması yapmalıyız;
+            if (user != null && user.PasswordHash == null) 
             {
-                Id = Guid.NewGuid().ToString(),
-                UserName = request.Email,
-                Email = request.Email
-            }, request.Password);
+                user.PasswordHash = _userManager.PasswordHasher.HashPassword(user, request.Password);
+                result = await _userManager.UpdateAsync(user);
+            }
+            else
+            {
+                result = await _userManager.CreateAsync(new()
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    UserName = request.Email,
+                    Email = request.Email
+                }, request.Password);
+            }
 
             CreateUserCommandResponse response = new() { Succeeded = result.Succeeded };
 
