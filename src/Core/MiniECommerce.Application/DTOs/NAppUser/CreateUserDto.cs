@@ -1,15 +1,15 @@
-﻿using MediatR;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MiniECommerce.Application.Features.Queries.NAppUser.LoginUser
+namespace MiniECommerce.Application.DTOs.NAppUser
 {
-    public class LoginUserQueryRequest : IRequest<LoginUserQueryResponse>
+    public class CreateUserDto
     {
         public string Email { get; set; }
         public string Password { get; set; }
+        public string RePassword { get; set; }
     }
 }

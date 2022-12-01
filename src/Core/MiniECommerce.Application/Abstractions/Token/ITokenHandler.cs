@@ -5,10 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MiniECommerce.Application.Abstractions.NToken
+namespace MiniECommerce.Application.Abstractions.Token
 {
     public interface ITokenHandler
     {
-        Token CreateAccessToken(int minute);
+        TokenDto CreateAccessToken(int minute);
     }
 }

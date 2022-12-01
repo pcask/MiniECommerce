@@ -1,22 +1,21 @@
 ﻿using MediatR;
 using MiniECommerce.Application.Abstractions.GoogleIdToken;
+using MiniECommerce.Application.Abstractions.Services;
 
 namespace MiniECommerce.Application.Features.Commands.NAppUser.LoginWithGoogle
 {
     public class LoginWithGoogleCommandHandler : IRequestHandler<LoginWithGoogleCommandRequest, LoginWithGoogleCommandResponse>
     {
-        private readonly IGoogleIdTokenValidationService _idTokenValidationService;
+        private readonly IAuthService _authService;
 
-        public LoginWithGoogleCommandHandler(IGoogleIdTokenValidationService idTokenValidationService)
+        public LoginWithGoogleCommandHandler(IAuthService authService)
         {
-            _idTokenValidationService = idTokenValidationService;
+            _authService = authService;
         }
 
         public async Task<LoginWithGoogleCommandResponse> Handle(LoginWithGoogleCommandRequest request, CancellationToken cancellationToken)
         {
-            var response = await _idTokenValidationService.ValidateIdTokenAsync(request);
-
-            return new() { Token = response };
+            return new() { Token = await _authService.LoginWithGoogleAsync(request.IdToken, 60 * 10) };
         }
     }
 }

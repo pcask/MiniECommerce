@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using MiniECommerce.Application.Abstractions.NToken;
+using MiniECommerce.Application.Abstractions.Token;
 using MiniECommerce.Application.DTOs;
 using System;
 using System.Collections.Generic;
@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MiniECommerce.Infrastructure.Services.NToken
+namespace MiniECommerce.Infrastructure.Services.Token
 {
     public class TokenHandler : ITokenHandler
     {
@@ -20,15 +20,15 @@ namespace MiniECommerce.Infrastructure.Services.NToken
             _configuration = configuration;
         }
 
-        public Token CreateAccessToken(int minute)
+        public TokenDto CreateAccessToken(int second)
         {
-            Token token = new Token();
+            TokenDto token = new TokenDto();
 
             SymmetricSecurityKey securityKey = new(Encoding.UTF8.GetBytes(_configuration["Token:SecurityKey"]));
 
             SigningCredentials signingCredentials = new(securityKey, SecurityAlgorithms.HmacSha256);
 
-            token.Expiration = DateTime.UtcNow.AddMinutes(minute);
+            token.Expiration = DateTime.UtcNow.AddMinutes(second);
 
             // Hangi değerlere göre token doğrulaması yapılacağını belirlediysek aynı değerlerle de token'ımızı oluşturuyoruz.
             JwtSecurityToken securityToken = new(

@@ -14,6 +14,8 @@ namespace MiniECommerce.Application
         {
             // IMediatR ve Application katmanındaki tüm IRequest, IRequestHandler interfacelerine karşılık gelen nesneleri IoC Container'a kaydediyoruz.
             services.AddMediatR(typeof(ServiceRegistration));
+
+            services.AddHttpClient();
         }
     }
 }
