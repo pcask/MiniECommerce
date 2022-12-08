@@ -53,5 +53,12 @@ namespace MiniECommerce.Persistence.Services
 
             return response;
         }
+
+        public async Task UpdateRefreshToken(AppUser user, string refreshToken, DateTime endDate)
+        {
+            user.RefreshToken = refreshToken.Remove(44);
+            user.RefreshTokenEndDate = endDate;
+            await _userManager.UpdateAsync(user);
+        }
     }
 }

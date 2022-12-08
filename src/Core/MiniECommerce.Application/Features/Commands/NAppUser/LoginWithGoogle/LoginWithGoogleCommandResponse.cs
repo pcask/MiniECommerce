@@ -4,6 +4,7 @@ namespace MiniECommerce.Application.Features.Commands.NAppUser.LoginWithGoogle
 {
     public class LoginWithGoogleCommandResponse
     {
-        public TokenDto Token { get; set; }
+        public string AccessToken { get; set; }
+        public string RefreshToken { get; set; }
     }
 }

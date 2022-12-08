@@ -14,7 +14,8 @@ namespace MiniECommerce.Application.Features.Commands.NAppUser.LoginWithFacebook
 
         public async Task<LoginWithFacebookCommandResponse> Handle(LoginWithFacebookCommandRequest request, CancellationToken cancellationToken)
         {
-            return new() { Token = await _authService.LoginWithFacebookAsync(request.AuthToken, 60 * 10) };
+            var token = await _authService.LoginWithFacebookAsync(request.AuthToken, 20);
+            return new() { AccessToken = token.AccessToken, RefreshToken = token.RefreshToken };
         }
     }
 }

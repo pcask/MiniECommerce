@@ -9,6 +9,6 @@ namespace MiniECommerce.Application.Abstractions.Services.Authentication
 {
     public interface IInternalAuthentication
     {
-        Task<TokenDto> LoginAsync(string email, string password, int second);
+        Task<TokenDto> LoginAsync(string email, string password, int jwtExpireInSecond);
     }
 }

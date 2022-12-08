@@ -9,6 +9,9 @@ namespace MiniECommerce.Application.Abstractions.Token
 {
     public interface ITokenHandler
     {
-        TokenDto CreateAccessToken(int minute);
+        TokenDto CreateTokens(int expireInSeconds);
+        string CreateRefreshToken(DateTime endDate);
+
+        bool ValidateAccessTokenWithoutExpiration(string accessToken);
     }
 }

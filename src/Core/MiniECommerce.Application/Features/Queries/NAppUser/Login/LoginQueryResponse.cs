@@ -4,6 +4,7 @@ namespace MiniECommerce.Application.Features.Queries.NAppUser.LoginUser
 {
     public class LoginQueryResponse
     {
-        public TokenDto Token { get; set; }
+        public string AccessToken { get; set; }
+        public string RefreshToken { get; set; }
     }
 }

@@ -16,6 +16,7 @@ namespace MiniECommerce.Persistence.Services
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly ITokenHandler _tokenHandler;
+        private readonly IAppUserService _appUserService;
         private readonly IGoogleIdTokenValidationService _googleIdTokenValidationService;
         private readonly IFacebookAuthTokenValidationService _facebookAuthTokenValidationService;
 
@@ -24,16 +25,18 @@ namespace MiniECommerce.Persistence.Services
             SignInManager<AppUser> signInManager,
             ITokenHandler tokenHandler,
             IGoogleIdTokenValidationService googleIdTokenValidationService,
-            IFacebookAuthTokenValidationService facebookAuthTokenValidationService)
+            IFacebookAuthTokenValidationService facebookAuthTokenValidationService,
+            IAppUserService appUserService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _tokenHandler = tokenHandler;
             _googleIdTokenValidationService = googleIdTokenValidationService;
             _facebookAuthTokenValidationService = facebookAuthTokenValidationService;
+            _appUserService = appUserService;
         }
 
-        public async Task<TokenDto> LoginAsync(string email, string password, int expiration)
+        public async Task<TokenDto> LoginAsync(string email, string password, int jwtExpireInSecond)
         {
             var user = await _userManager.FindByEmailAsync(email);
 
@@ -45,24 +48,26 @@ namespace MiniECommerce.Persistence.Services
             if (!result.Succeeded)
                 throw new AuthenticationErrorException();
 
-            return _tokenHandler.CreateAccessToken(expiration);
+            TokenDto token = _tokenHandler.CreateTokens(jwtExpireInSecond);
+            await _appUserService.UpdateRefreshToken(user, token.RefreshToken, token.RTokenEndDate);
+            return token;
         }
 
-        public async Task<TokenDto> LoginWithFacebookAsync(string authToken, int expiration)
+        public async Task<TokenDto> LoginWithFacebookAsync(string authToken, int jwtExpireInSecond)
         {
             var userInfoDto = await _facebookAuthTokenValidationService.ValidateAuthTokenAsync(authToken);
 
-            return await ExternalLoginAsync("FACEBOOK", userInfoDto.Id, userInfoDto.Email, expiration);
+            return await ExternalLoginAsync("FACEBOOK", userInfoDto.Id, userInfoDto.Email, jwtExpireInSecond);
         }
 
-        public async Task<TokenDto> LoginWithGoogleAsync(string idToken, int expiration)
+        public async Task<TokenDto> LoginWithGoogleAsync(string idToken, int jwtExpireInSecond)
         {
             PayloadDto payload = await _googleIdTokenValidationService.ValidateIdTokenAsync(idToken);
 
-            return await ExternalLoginAsync("GOOGLE", payload.Subject, payload.Email, expiration);
+            return await ExternalLoginAsync("GOOGLE", payload.Subject, payload.Email, jwtExpireInSecond);
         }
 
-        private async Task<TokenDto> ExternalLoginAsync(string providerName, string providerKey, string email, int expiration)
+        private async Task<TokenDto> ExternalLoginAsync(string providerName, string providerKey, string email, int jwtExpireInSecond)
         {
             UserLoginInfo userLoginInfo = new(providerName, providerKey, providerName);
 
@@ -90,7 +95,9 @@ namespace MiniECommerce.Persistence.Services
                     await _userManager.AddLoginAsync(user, userLoginInfo);
             }
 
-            return _tokenHandler.CreateAccessToken(expiration);
+            TokenDto token = _tokenHandler.CreateTokens(jwtExpireInSecond);
+            await _appUserService.UpdateRefreshToken(user, token.RefreshToken, token.RTokenEndDate);
+            return token;
         }
     }
 }

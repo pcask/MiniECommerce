@@ -2,12 +2,9 @@
 using Microsoft.IdentityModel.Tokens;
 using MiniECommerce.Application.Abstractions.Token;
 using MiniECommerce.Application.DTOs;
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace MiniECommerce.Infrastructure.Services.Token
 {
@@ -15,33 +12,64 @@ namespace MiniECommerce.Infrastructure.Services.Token
     {
         private readonly IConfiguration _configuration;
 
+
+        private SymmetricSecurityKey _securityKey;
+        private string _audience;
+        private string _issuer;
         public TokenHandler(IConfiguration configuration)
         {
             _configuration = configuration;
+            _securityKey = new(Encoding.UTF8.GetBytes(_configuration["Token:SecurityKey"]));
+            _audience = _configuration["Token:Audience"];
+            _issuer = _configuration["Token:Issuer"];
         }
 
-        public TokenDto CreateAccessToken(int second)
+        public TokenDto CreateTokens(int expireInSeconds)
         {
-            TokenDto token = new TokenDto();
+            TokenDto token = new();
 
-            SymmetricSecurityKey securityKey = new(Encoding.UTF8.GetBytes(_configuration["Token:SecurityKey"]));
+            SigningCredentials signingCredentials = new(_securityKey, SecurityAlgorithms.HmacSha256);
 
-            SigningCredentials signingCredentials = new(securityKey, SecurityAlgorithms.HmacSha256);
-
-            token.Expiration = DateTime.UtcNow.AddMinutes(second);
+            token.ATokenEndDate = DateTime.UtcNow.AddSeconds(expireInSeconds);
 
             // Hangi değerlere göre token doğrulaması yapılacağını belirlediysek aynı değerlerle de token'ımızı oluşturuyoruz.
             JwtSecurityToken securityToken = new(
-                audience: _configuration["Token:Audience"],
-                issuer: _configuration["Token:Issuer"],
-                expires: token.Expiration,
+                audience: _audience,
+                issuer: _issuer,
+                expires: token.ATokenEndDate,
                 notBefore: DateTime.UtcNow,
                 signingCredentials: signingCredentials
                 );
 
             token.AccessToken = new JwtSecurityTokenHandler().WriteToken(securityToken);
-
+            token.RTokenEndDate = token.ATokenEndDate.AddSeconds(expireInSeconds / 3);
+            token.RefreshToken = CreateRefreshToken(token.RTokenEndDate);
             return token;
+        }
+
+        public string CreateRefreshToken(DateTime endDate)
+        {
+            byte[] number = new byte[32];
+            using RandomNumberGenerator generator = RandomNumberGenerator.Create();
+            generator.GetBytes(number);
+            return Convert.ToBase64String(number) + endDate;
+        }
+
+        public bool ValidateAccessTokenWithoutExpiration(string accessToken)
+        {
+            JwtSecurityTokenHandler handler = new();
+            handler.ValidateToken(accessToken, new TokenValidationParameters()
+            {
+                ValidateAudience = true,
+                ValidateIssuer = true,
+                ValidateIssuerSigningKey = true,
+
+                ValidAudience = _audience,
+                ValidIssuer = _issuer,
+                IssuerSigningKey = _securityKey
+            }, out SecurityToken validatedToken);
+
+            return validatedToken != null;
         }
     }
 }

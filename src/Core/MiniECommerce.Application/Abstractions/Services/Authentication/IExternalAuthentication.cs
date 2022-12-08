@@ -4,7 +4,7 @@ namespace MiniECommerce.Application.Abstractions.Services.Authentication
 {
     public interface IExternalAuthentication
     {
-        Task<TokenDto> LoginWithGoogleAsync(string idToken, int expiration);
-        Task<TokenDto> LoginWithFacebookAsync(string authToken, int expiration);
+        Task<TokenDto> LoginWithGoogleAsync(string idToken, int jwtExpireInSecond);
+        Task<TokenDto> LoginWithFacebookAsync(string authToken, int jwtExpireInSecond);
     }
 }
