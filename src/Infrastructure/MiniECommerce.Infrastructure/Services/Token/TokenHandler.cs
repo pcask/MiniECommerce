@@ -2,7 +2,9 @@
 using Microsoft.IdentityModel.Tokens;
 using MiniECommerce.Application.Abstractions.Token;
 using MiniECommerce.Application.DTOs;
+using MiniECommerce.Domain.Entities.Identity;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -24,7 +26,7 @@ namespace MiniECommerce.Infrastructure.Services.Token
             _issuer = _configuration["Token:Issuer"];
         }
 
-        public TokenDto CreateTokens(int expireInSeconds)
+        public TokenDto CreateTokens(int expireInSeconds, AppUser user)
         {
             TokenDto token = new();
 
@@ -38,7 +40,8 @@ namespace MiniECommerce.Infrastructure.Services.Token
                 issuer: _issuer,
                 expires: token.ATokenEndDate,
                 notBefore: DateTime.UtcNow,
-                signingCredentials: signingCredentials
+                signingCredentials: signingCredentials,
+                claims: new List<Claim> { new(ClaimTypes.Email, user.Email) }
                 );
 
             token.AccessToken = new JwtSecurityTokenHandler().WriteToken(securityToken);

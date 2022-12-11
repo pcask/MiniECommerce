@@ -23,6 +23,7 @@ namespace MiniECommerce.Application.Features.Queries.NProduct.GetAllProducts
             var products = _productReadRepository.GetAll(tracking: false)
                 .Skip(request.Page * request.Size)
                 .Take(request.Size)
+                .OrderBy(p => p.UpdatedDate)
                 .Select(p => new
                 {
                     p.Id,

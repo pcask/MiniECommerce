@@ -32,7 +32,7 @@ namespace MiniECommerce.Application.Features.Commands.NAppUser.LoginWithRefreshT
 
             if (user != null && user.RefreshTokenEndDate > DateTime.UtcNow)
             {
-                var tokens = _tokenHandler.CreateTokens(30);
+                var tokens = _tokenHandler.CreateTokens(30, user);
 
                 user.RefreshToken = tokens.RefreshToken.Remove(44);
                 user.RefreshTokenEndDate = tokens.RTokenEndDate;

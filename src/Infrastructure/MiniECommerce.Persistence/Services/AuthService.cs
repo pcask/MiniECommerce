@@ -48,7 +48,7 @@ namespace MiniECommerce.Persistence.Services
             if (!result.Succeeded)
                 throw new AuthenticationErrorException();
 
-            TokenDto token = _tokenHandler.CreateTokens(jwtExpireInSecond);
+            TokenDto token = _tokenHandler.CreateTokens(jwtExpireInSecond, user);
             await _appUserService.UpdateRefreshToken(user, token.RefreshToken, token.RTokenEndDate);
             return token;
         }
@@ -95,7 +95,7 @@ namespace MiniECommerce.Persistence.Services
                     await _userManager.AddLoginAsync(user, userLoginInfo);
             }
 
-            TokenDto token = _tokenHandler.CreateTokens(jwtExpireInSecond);
+            TokenDto token = _tokenHandler.CreateTokens(jwtExpireInSecond, user);
             await _appUserService.UpdateRefreshToken(user, token.RefreshToken, token.RTokenEndDate);
             return token;
         }
