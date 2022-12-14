@@ -11,6 +11,7 @@ using MiniECommerce.Infrastructure.Services.Storage.Azure;
 using MiniECommerce.Infrastructure.Services.Storage.Local;
 using MiniECommerce.Persistence;
 using MiniECommerce.WebApi.Configurations.Serilog.ColumnWriters;
+using MiniECommerce.WebApi.Extensions;
 using Serilog;
 using Serilog.Context;
 using Serilog.Core;
@@ -91,9 +92,9 @@ Logger logger = new LoggerConfiguration()
         { "log_event", new LogEventSerializedColumnWriter() },
         { "user_email", new UserEmailColumnWriter() }
     })
-    .WriteTo.Seq(serverUrl: builder.Configuration["Seq:ServerURL"])
+    //.WriteTo.Seq(serverUrl: builder.Configuration["Seq:ServerURL"])
     .Enrich.FromLogContext() //LogContext'e pushladığımız property'lerin okunmasını ve database'deki karşılığı olan kolon'a yazılmasını sağlıyoruz.
-    .MinimumLevel.Information()
+    .MinimumLevel.Error()
     .CreateLogger();
 
 builder.Host.UseSerilog(logger);
@@ -119,6 +120,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+
+//Global exception handler için yazmış olduğumuz extension method'ı çağırıyoruz.
+app.ConfigureExceptionHandler<Program>(app.Services.GetRequiredService<ILogger<Program>>());
 
 app.UseStaticFiles();
 
