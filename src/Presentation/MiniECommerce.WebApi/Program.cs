@@ -10,6 +10,7 @@ using MiniECommerce.Infrastructure.Filters;
 using MiniECommerce.Infrastructure.Services.Storage.Azure;
 using MiniECommerce.Infrastructure.Services.Storage.Local;
 using MiniECommerce.Persistence;
+using MiniECommerce.SignalR;
 using MiniECommerce.WebApi.Configurations.Serilog.ColumnWriters;
 using MiniECommerce.WebApi.Extensions;
 using Serilog;
@@ -42,6 +43,7 @@ builder.Services.ConfigureNpgSql(builder.Configuration);
 builder.Services.AddPersistenceServices();
 builder.Services.AddInfrastructureServices();
 builder.Services.AddApplicationServices();
+builder.Services.AddSignalRServices();
 
 //builder.Services.AddStorage<AzureStorage>();
 builder.Services.AddStorage<LocalStorage>();
@@ -52,6 +54,7 @@ builder.Services.AddCors(corsOptions => corsOptions.AddDefaultPolicy(corsPolicyB
     .WithOrigins("http://localhost:4200", "https://localhost:4200")
     .AllowAnyHeader()
     .AllowAnyMethod()
+    .AllowCredentials() // SignalR ile client tarafından connection isteklerine izin vermek için ekliyoruz.
 ));
 
 // Request'lerle gelen token'ın (JWT) doğrulanması için gerekli konfigürasyonlar
@@ -151,5 +154,8 @@ app.Use(async (context, next) =>
 });
 
 app.MapControllers();
+
+// Tüm hub'larımızın entpoint'lerinin map'lendiği extension method
+app.MapHubs();
 
 app.Run();
