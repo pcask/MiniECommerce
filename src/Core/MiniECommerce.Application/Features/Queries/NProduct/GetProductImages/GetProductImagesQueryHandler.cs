@@ -27,8 +27,9 @@ namespace MiniECommerce.Application.Features.Queries.NProduct.GetProductImages
             {
                 Id = i.Id,
                 FileName = i.FileName,
-                Path = $"{_configuration["StorageBaseURL"]}/{i.FileName}",
-                CreatedDate = i.CreatedDate
+                Path = i.Path,
+                CreatedDate = i.CreatedDate,
+                Showcase = i.Showcase
             }).ToList();
         }
     }

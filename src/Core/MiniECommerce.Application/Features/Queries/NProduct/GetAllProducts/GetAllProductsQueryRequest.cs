@@ -14,5 +14,14 @@ namespace MiniECommerce.Application.Features.Queries.NProduct.GetAllProducts
 
         public int Page { get; set; } = 0;
         public int Size { get; set; } = 5;
+
+        // With Images
+        public int Wi { get; set; }
+
+        // Filter brand
+        public string? Fb { get; set; }
+
+        // Order By
+        public string? Ob { get; set; }
     }
 }

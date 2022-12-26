@@ -22,6 +22,21 @@ namespace MiniECommerce.Persistence.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("BrandBrandLogoFile", b =>
+                {
+                    b.Property<Guid>("BrandLogoFilesId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("BrandsId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("BrandLogoFilesId", "BrandsId");
+
+                    b.HasIndex("BrandsId");
+
+                    b.ToTable("BrandBrandLogoFile");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.Property<int>("Id")
@@ -128,6 +143,33 @@ namespace MiniECommerce.Persistence.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("MiniECommerce.Domain.Entities.Brand", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Code")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Code"));
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Brands");
+                });
+
             modelBuilder.Entity("MiniECommerce.Domain.Entities.Customer", b =>
                 {
                     b.Property<Guid>("Id")
@@ -169,6 +211,9 @@ namespace MiniECommerce.Persistence.Migrations
                     b.Property<string>("Path")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<bool>("Showcase")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Storage")
                         .IsRequired()
@@ -316,6 +361,9 @@ namespace MiniECommerce.Persistence.Migrations
                     b.Property<int>("AmountOfStock")
                         .HasColumnType("integer");
 
+                    b.Property<int>("BrandCode")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
 
@@ -330,6 +378,8 @@ namespace MiniECommerce.Persistence.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BrandCode");
 
                     b.ToTable("Products");
                 });
@@ -364,6 +414,13 @@ namespace MiniECommerce.Persistence.Migrations
                     b.ToTable("ProductProductImageFile");
                 });
 
+            modelBuilder.Entity("MiniECommerce.Domain.Entities.BrandLogoFile", b =>
+                {
+                    b.HasBaseType("MiniECommerce.Domain.Entities.File");
+
+                    b.HasDiscriminator().HasValue("BrandLogoFile");
+                });
+
             modelBuilder.Entity("MiniECommerce.Domain.Entities.InvoiceFile", b =>
                 {
                     b.HasBaseType("MiniECommerce.Domain.Entities.File");
@@ -379,6 +436,21 @@ namespace MiniECommerce.Persistence.Migrations
                     b.HasBaseType("MiniECommerce.Domain.Entities.File");
 
                     b.HasDiscriminator().HasValue("ProductImageFile");
+                });
+
+            modelBuilder.Entity("BrandBrandLogoFile", b =>
+                {
+                    b.HasOne("MiniECommerce.Domain.Entities.BrandLogoFile", null)
+                        .WithMany()
+                        .HasForeignKey("BrandLogoFilesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MiniECommerce.Domain.Entities.Brand", null)
+                        .WithMany()
+                        .HasForeignKey("BrandsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -443,6 +515,18 @@ namespace MiniECommerce.Persistence.Migrations
                     b.Navigation("Customer");
                 });
 
+            modelBuilder.Entity("MiniECommerce.Domain.Entities.Product", b =>
+                {
+                    b.HasOne("MiniECommerce.Domain.Entities.Brand", "Brand")
+                        .WithMany("Products")
+                        .HasForeignKey("BrandCode")
+                        .HasPrincipalKey("Code")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Brand");
+                });
+
             modelBuilder.Entity("OrderProduct", b =>
                 {
                     b.HasOne("MiniECommerce.Domain.Entities.Order", null)
@@ -471,6 +555,11 @@ namespace MiniECommerce.Persistence.Migrations
                         .HasForeignKey("ProductsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("MiniECommerce.Domain.Entities.Brand", b =>
+                {
+                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("MiniECommerce.Domain.Entities.Customer", b =>

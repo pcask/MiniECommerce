@@ -12,6 +12,10 @@ namespace MiniECommerce.Domain.Entities
         public string Name { get; set; }
         public int AmountOfStock { get; set; }
         public double Price { get; set; }
+
+        public int BrandCode { get; set; }
+        public Brand Brand { get; set; }
+
         public ICollection<Order> Orders { get; set; }
         public ICollection<ProductImageFile> ProductImageFiles { get; set; }
     }

@@ -12,5 +12,6 @@ namespace MiniECommerce.Application.Features.Commands.NProduct.CreateProduct
         public string Name { get; set; }
         public double Price { get; set; }
         public int AmountOfStock { get; set; }
+        public int BrandCode { get; set; }
     }
 }

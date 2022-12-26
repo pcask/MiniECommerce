@@ -5,6 +5,7 @@ using MiniECommerce.Application.Features.Commands.NProduct.CreateProduct;
 using MiniECommerce.Application.Features.Commands.NProduct.DeleteProduct;
 using MiniECommerce.Application.Features.Commands.NProduct.DeleteProductImage;
 using MiniECommerce.Application.Features.Commands.NProduct.UpdateProduct;
+using MiniECommerce.Application.Features.Commands.NProductImageFile.SetImageShowcase;
 using MiniECommerce.Application.Features.Commands.NProductImageFile.UploadProductImageFile;
 using MiniECommerce.Application.Features.Queries.NProduct.GetAllProducts;
 using MiniECommerce.Application.Features.Queries.NProduct.GetProductImages;
@@ -14,7 +15,7 @@ namespace MiniECommerce.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(AuthenticationSchemes ="Admin")]
+    [Authorize(AuthenticationSchemes = "Admin")]
     public class ProductsController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -24,6 +25,7 @@ namespace MiniECommerce.WebApi.Controllers
             _mediator = mediator;
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] GetAllProductsQueryRequest getAllProductsQueryRequest)
         {
@@ -75,6 +77,14 @@ namespace MiniECommerce.WebApi.Controllers
             DeleteProductImageCommandRequest request = new() { Id = id, ImageId = imageId };
             await _mediator.Send(request);
             return Ok();
+        }
+
+        [HttpPut("[action]")]
+        public async Task<IActionResult> SetImageShowcase([FromBody] SetImageShowcaseCommandRequest request)
+        {
+            var response = await _mediator.Send(request);
+
+            return Ok(response);
         }
     }
 }

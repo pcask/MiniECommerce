@@ -18,7 +18,7 @@ namespace MiniECommerce.Application.Features.Queries.NAppUser.LoginUser
 
         public async Task<LoginQueryResponse> Handle(LoginQueryRequest request, CancellationToken cancellationToken)
         {
-            var token = await _authService.LoginAsync(request.Email, request.Password, 20);
+            var token = await _authService.LoginAsync(request.Email, request.Password, 60 * 60);
             return new() { AccessToken = token.AccessToken, RefreshToken = token.RefreshToken };
         }
     }

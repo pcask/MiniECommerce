@@ -21,7 +21,8 @@ namespace MiniECommerce.Application.Features.Commands.NProduct.CreateProduct
             {
                 Name = request.Name,
                 AmountOfStock = request.AmountOfStock,
-                Price = request.Price
+                Price = request.Price,
+                BrandCode = request.BrandCode
             });
 
             await _productWriteRepository.SaveAsync();

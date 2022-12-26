@@ -155,7 +155,7 @@ app.Use(async (context, next) =>
 
 app.MapControllers();
 
-// Tüm hub'larımızın entpoint'lerinin map'lendiği extension method
+// Tüm hub'larımızın endpoint'lerinin map'lendiği extension method
 app.MapHubs();
 
 app.Run();

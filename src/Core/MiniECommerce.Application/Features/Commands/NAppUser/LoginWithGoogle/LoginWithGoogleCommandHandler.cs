@@ -15,7 +15,7 @@ namespace MiniECommerce.Application.Features.Commands.NAppUser.LoginWithGoogle
 
         public async Task<LoginWithGoogleCommandResponse> Handle(LoginWithGoogleCommandRequest request, CancellationToken cancellationToken)
         {
-            var token = await _authService.LoginWithGoogleAsync(request.IdToken, 30);
+            var token = await _authService.LoginWithGoogleAsync(request.IdToken, 60 * 60);
             return new() { AccessToken = token.AccessToken, RefreshToken = token.RefreshToken };
         }
     }

@@ -3,6 +3,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MiniECommerce.Application.Abstractions.Services;
 using MiniECommerce.Application.Abstractions.Services.Authentication;
+using MiniECommerce.Application.Repositories.NBrand;
+using MiniECommerce.Application.Repositories.NBrandLogoFile;
 using MiniECommerce.Application.Repositories.NCustomer;
 using MiniECommerce.Application.Repositories.NFile;
 using MiniECommerce.Application.Repositories.NInvoiceFile;
@@ -11,6 +13,8 @@ using MiniECommerce.Application.Repositories.NProduct;
 using MiniECommerce.Application.Repositories.NProductImageFile;
 using MiniECommerce.Domain.Entities.Identity;
 using MiniECommerce.Persistence.Contexts;
+using MiniECommerce.Persistence.Repositories.NBrand;
+using MiniECommerce.Persistence.Repositories.NBrandLogoFile;
 using MiniECommerce.Persistence.Repositories.NCustomer;
 using MiniECommerce.Persistence.Repositories.NFile;
 using MiniECommerce.Persistence.Repositories.NInvoiceFile;
@@ -54,6 +58,11 @@ namespace MiniECommerce.Persistence
             services.AddScoped<IInvoiceFileWriteRepository, InvoiceFileWriteRepository>();
             services.AddScoped<IProductImageFileReadRepository, ProductImageFileReadRepository>();
             services.AddScoped<IProductImageFileWriteRepository, ProductImageFileWriteRepository>();
+            services.AddScoped<IBrandReadRepository, BrandReadRepository>();
+            services.AddScoped<IBrandWriteRepository, BrandWriteRepository>();
+            services.AddScoped<IBrandLogoFileReadRepository, BrandLogoFileReadRepository>();
+            services.AddScoped<IBrandLogoFileWriteRepository, BrandLogoFileWriteRepository>();
+
 
             services.AddScoped<IAppUserService, AppUserService>();
             services.AddScoped<IAuthService, AuthService>();
