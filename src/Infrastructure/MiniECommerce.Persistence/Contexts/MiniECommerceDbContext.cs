@@ -26,6 +26,8 @@ namespace MiniECommerce.Persistence.Contexts
         public DbSet<InvoiceFile> InvoiceFiles { get; set; }
         public DbSet<ProductImageFile> ProductImageFiles { get; set; }
         public DbSet<BrandLogoFile> BrandLogoFiles { get; set; }
+        public DbSet<Cart> Carts { get; set; }
+        public DbSet<CartItem> CartItems { get; set; }
 
         // Entity'lerimizin bazı property'lerinin otomatik olarak değer atamasını yapmak için merkezi bir yerden müdahele edebiliriz.
         // Böyle bir senaryo için DbContext'in SaveChanges method'ını override ederek bir nevi interceptor yazmış oluyoruz.
@@ -61,7 +63,12 @@ namespace MiniECommerce.Persistence.Contexts
                 .HasForeignKey(p => p.BrandCode)
                 .HasPrincipalKey(b => b.Code);
 
-            
+            builder.Entity<Cart>()
+                .HasOne(c => c.Order)
+                .WithOne(o => o.Cart)
+                .HasForeignKey<Order>(o => o.CartId);
+
+
             base.OnModelCreating(builder);
         }
     }

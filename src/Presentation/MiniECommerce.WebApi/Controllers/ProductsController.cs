@@ -8,6 +8,7 @@ using MiniECommerce.Application.Features.Commands.NProduct.UpdateProduct;
 using MiniECommerce.Application.Features.Commands.NProductImageFile.SetImageShowcase;
 using MiniECommerce.Application.Features.Commands.NProductImageFile.UploadProductImageFile;
 using MiniECommerce.Application.Features.Queries.NProduct.GetAllProducts;
+using MiniECommerce.Application.Features.Queries.NProduct.GetByIdProduct;
 using MiniECommerce.Application.Features.Queries.NProduct.GetProductImages;
 using System.Net;
 
@@ -32,6 +33,17 @@ namespace MiniECommerce.WebApi.Controllers
             GetAllProductsQueryResponse response = await _mediator.Send(getAllProductsQueryRequest);
             return Ok(response);
         }
+
+
+        [AllowAnonymous]
+        [HttpGet("[action]/{id}")]
+        public async Task<IActionResult> GetById([FromRoute] GetByIdProductQueryRequest request)
+        {
+            var response = await _mediator.Send(request);
+
+            return Ok(response);
+        }
+
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] CreateProductCommandRequest request)

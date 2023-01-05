@@ -15,20 +15,21 @@ namespace MiniECommerce.Application.Features.Queries.NProduct.GetAllProducts
     public class GetAllProductsQueryHandler : IRequestHandler<GetAllProductsQueryRequest, GetAllProductsQueryResponse>
     {
         private readonly IProductReadRepository _productReadRepository;
-        private readonly IConfiguration _configuration;
 
-        public GetAllProductsQueryHandler(IProductReadRepository productReadRepository, IConfiguration configuration)
+        public GetAllProductsQueryHandler(IProductReadRepository productReadRepository)
         {
             _productReadRepository = productReadRepository;
-            _configuration = configuration;
         }
 
         public async Task<GetAllProductsQueryResponse> Handle(GetAllProductsQueryRequest request, CancellationToken cancellationToken)
         {
             var query = _productReadRepository.GetAll(tracking: false);
 
+            query = query.Include(p => p.Brand);
+
+            // Ürünlerin markalara göre filtrelenmesi;
             string brands = request.Fb;
-            if (brands != null)
+            if (!string.IsNullOrWhiteSpace(brands))
             {
                 if (brands.Contains('-'))
                 {
@@ -43,14 +44,12 @@ namespace MiniECommerce.Application.Features.Queries.NProduct.GetAllProducts
 
             var totalProductCount = query.Count();
 
-            query = query
-                    .Skip(request.Page * request.Size)
-                    .Take(request.Size);
-
-            if (request.Wi == 1) // Ürün görselleri isteniyorsa;
+            // Ürün görselleri isteniyorsa;
+            if (request.Wi == 1)
                 query = query.Include(p => p.ProductImageFiles);
 
-            if (request.Ob != null)
+            // Ürünlerin sıralanması işlemi
+            if (!string.IsNullOrWhiteSpace(request.Ob))
             {
                 query = request.Ob.ToLower() switch
                 {
@@ -63,11 +62,16 @@ namespace MiniECommerce.Application.Features.Queries.NProduct.GetAllProducts
             else
                 query = query.OrderBy(p => p.CreatedDate);
 
+            query = query
+                    .Skip(request.Page * request.Size)
+                    .Take(request.Size);
+
             var products = query
             .Select(p => new
             {
                 p.Id,
                 p.Name,
+                BrandName = p.Brand.Name,
                 p.AmountOfStock,
                 p.Price,
                 p.CreatedDate,

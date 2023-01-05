@@ -39,6 +39,9 @@ builder.Services.AddSwaggerGen();
 // PostgreSql kullanımı için yazmış olduğumuz extension method;
 builder.Services.ConfigureNpgSql(builder.Configuration);
 
+// Client'dan gelen request sonucu oluşturulan HttpContext nesnesine katmanlarımızdaki nesneler üzerinden erişebilmemizi sağlayan bir servis.
+builder.Services.AddHttpContextAccessor();
+
 // Service'lerin kullanımı için yazmış olduğumuz extension method'lar;
 builder.Services.AddPersistenceServices();
 builder.Services.AddInfrastructureServices();

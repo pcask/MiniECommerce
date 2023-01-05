@@ -66,6 +66,7 @@ namespace MiniECommerce.Infrastructure.Services.Token
                 ValidateAudience = true,
                 ValidateIssuer = true,
                 ValidateIssuerSigningKey = true,
+                ValidateLifetime = false,
 
                 ValidAudience = _audience,
                 ValidIssuer = _issuer,

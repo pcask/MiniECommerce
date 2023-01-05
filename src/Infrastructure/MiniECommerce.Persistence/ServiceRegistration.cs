@@ -5,6 +5,8 @@ using MiniECommerce.Application.Abstractions.Services;
 using MiniECommerce.Application.Abstractions.Services.Authentication;
 using MiniECommerce.Application.Repositories.NBrand;
 using MiniECommerce.Application.Repositories.NBrandLogoFile;
+using MiniECommerce.Application.Repositories.NCart;
+using MiniECommerce.Application.Repositories.NCartItem;
 using MiniECommerce.Application.Repositories.NCustomer;
 using MiniECommerce.Application.Repositories.NFile;
 using MiniECommerce.Application.Repositories.NInvoiceFile;
@@ -15,6 +17,8 @@ using MiniECommerce.Domain.Entities.Identity;
 using MiniECommerce.Persistence.Contexts;
 using MiniECommerce.Persistence.Repositories.NBrand;
 using MiniECommerce.Persistence.Repositories.NBrandLogoFile;
+using MiniECommerce.Persistence.Repositories.NCart;
+using MiniECommerce.Persistence.Repositories.NCartItem;
 using MiniECommerce.Persistence.Repositories.NCustomer;
 using MiniECommerce.Persistence.Repositories.NFile;
 using MiniECommerce.Persistence.Repositories.NInvoiceFile;
@@ -62,12 +66,17 @@ namespace MiniECommerce.Persistence
             services.AddScoped<IBrandWriteRepository, BrandWriteRepository>();
             services.AddScoped<IBrandLogoFileReadRepository, BrandLogoFileReadRepository>();
             services.AddScoped<IBrandLogoFileWriteRepository, BrandLogoFileWriteRepository>();
+            services.AddScoped<ICartReadRepository, CartReadRepository>();
+            services.AddScoped<ICartWriteRepository, CartWriteRepository>();
+            services.AddScoped<ICartItemReadRepository, CartItemReadRepository>();
+            services.AddScoped<ICartItemWriteRepository, CartItemWriteRepository>();
 
 
             services.AddScoped<IAppUserService, AppUserService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IExternalAuthentication, AuthService>();
             services.AddScoped<IInternalAuthentication, AuthService>();
+            services.AddScoped<ICartService, CartService>();
         }
     }
 }

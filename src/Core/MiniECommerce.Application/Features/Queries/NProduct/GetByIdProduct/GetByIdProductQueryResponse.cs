@@ -1,9 +1,9 @@
-﻿namespace MiniECommerce.Application.Features.Queries.NProduct.GetByIdProduct
+﻿using MiniECommerce.Domain.Entities;
+
+namespace MiniECommerce.Application.Features.Queries.NProduct.GetByIdProduct
 {
     public class GetByIdProductQueryResponse
     {
-        public string Name { get; set; }
-        public int AmountOfStock { get; set; }
-        public double Price { get; set; }
+        public Object Product { get; set; }
     }
 }
