@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MiniECommerce.Application.Abstractions.Services;
 using MiniECommerce.Application.Abstractions.Services.Authentication;
+using MiniECommerce.Application.Repositories.NAppUserAddress;
 using MiniECommerce.Application.Repositories.NBrand;
 using MiniECommerce.Application.Repositories.NBrandLogoFile;
 using MiniECommerce.Application.Repositories.NCart;
@@ -15,6 +16,7 @@ using MiniECommerce.Application.Repositories.NProduct;
 using MiniECommerce.Application.Repositories.NProductImageFile;
 using MiniECommerce.Domain.Entities.Identity;
 using MiniECommerce.Persistence.Contexts;
+using MiniECommerce.Persistence.Repositories.NAppUserAddress;
 using MiniECommerce.Persistence.Repositories.NBrand;
 using MiniECommerce.Persistence.Repositories.NBrandLogoFile;
 using MiniECommerce.Persistence.Repositories.NCart;
@@ -70,6 +72,8 @@ namespace MiniECommerce.Persistence
             services.AddScoped<ICartWriteRepository, CartWriteRepository>();
             services.AddScoped<ICartItemReadRepository, CartItemReadRepository>();
             services.AddScoped<ICartItemWriteRepository, CartItemWriteRepository>();
+            services.AddScoped<IAppUserAddressReadRepository, AppUserAddressReadRepository>();
+            services.AddScoped<IAppUserAddressWriteRepository, AppUserAddressWriteRepository>();
 
 
             services.AddScoped<IAppUserService, AppUserService>();
@@ -77,6 +81,7 @@ namespace MiniECommerce.Persistence
             services.AddScoped<IExternalAuthentication, AuthService>();
             services.AddScoped<IInternalAuthentication, AuthService>();
             services.AddScoped<ICartService, CartService>();
+            services.AddScoped<IConstantAddressService, ConstantAddressService>();
         }
     }
 }

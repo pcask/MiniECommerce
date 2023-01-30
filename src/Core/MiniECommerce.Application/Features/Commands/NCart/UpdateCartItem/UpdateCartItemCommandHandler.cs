@@ -17,7 +17,8 @@ namespace MiniECommerce.Application.Features.Commands.NCart.UpdateCartItem
             await _cartService.UpdateCartItemAsync(new()
             {
                 CartItemId = request.CartItemId,
-                Quantity = request.Quantity
+                Quantity = request.Quantity,
+                IsActive = request.IsActive
             });
 
             return new();

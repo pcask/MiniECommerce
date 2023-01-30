@@ -66,7 +66,7 @@ namespace MiniECommerce.Application.Features.Queries.NProduct.GetAllProducts
                     .Skip(request.Page * request.Size)
                     .Take(request.Size);
 
-            var products = query
+            var products = await query
             .Select(p => new
             {
                 p.Id,
@@ -78,7 +78,7 @@ namespace MiniECommerce.Application.Features.Queries.NProduct.GetAllProducts
                 p.UpdatedDate,
                 p.ProductImageFiles,
                 ImagePath = p.ProductImageFiles.FirstOrDefault().Path
-            }).ToList();
+            }).ToListAsync();
 
             return new()
             {

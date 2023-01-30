@@ -21,28 +21,28 @@ namespace MiniECommerce.WebApi.Controllers
             _mediator = mediator;
         }
 
-        [HttpGet]
+        [HttpGet("[action]")]
         public async Task<IActionResult> GetCartItems([FromQuery] GetCartItemsQueryRequest request)
         {
             var response = await _mediator.Send(request);
             return Ok(response);
         }
 
-        [HttpPost]
+        [HttpPost("[action]")]
         public async Task<IActionResult> AddCartItem(AddCartItemCommandRequest request)
         {
             var response = await _mediator.Send(request);
             return Ok(response);
         }
 
-        [HttpPut]
+        [HttpPut("[action]")]
         public async Task<IActionResult> UpdateCartItem(UpdateCartItemCommandRequest request)
         {
             var response = await _mediator.Send(request);
             return Ok(response);
         }
 
-        [HttpDelete("{CartItemId}")]
+        [HttpDelete("[action]/{CartItemId}")]
         public async Task<IActionResult> DeleteCartItem([FromRoute] DeleteCartItemCommandRequest request)
         {
             var response = await _mediator.Send(request);

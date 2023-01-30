@@ -9,13 +9,10 @@ namespace MiniECommerce.Domain.Entities
 {
     public class Order : BaseEntity
     {
-        public string Description { get; set; }
-        public string Address { get; set; }
-        public Guid CustomerId { get; set; }
-        public Guid CartId { get; set; }
+        public Guid AppUserAddressId { get; set; }
+        public AppUserAddress AppUserAddress { get; set; }
 
-        public Customer Customer { get; set; }
+        public Guid CartId { get; set; }
         public Cart Cart { get; set; }
-        public ICollection<Product> Products { get; set; }
     }
 }

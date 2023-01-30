@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MiniECommerce.Persistence.Migrations
 {
     [DbContext(typeof(MiniECommerceDbContext))]
-    [Migration("20230104190304_mig-8")]
-    partial class mig8
+    [Migration("20230121095405_mig-9")]
+    partial class mig9
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -145,6 +145,70 @@ namespace MiniECommerce.Persistence.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("MiniECommerce.Domain.Entities.AppUserAddress", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AddressDetail")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("AddressTitle")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("AppUserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("CompanyName")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("DistrictId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool?>("IsEInvoicePayer")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("NeighborhoodId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("ProvinceId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("TaxOffice")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Tin")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppUserId");
+
+                    b.ToTable("AppUserAddresses");
+                });
+
             modelBuilder.Entity("MiniECommerce.Domain.Entities.Brand", b =>
                 {
                     b.Property<Guid>("Id")
@@ -207,6 +271,9 @@ namespace MiniECommerce.Persistence.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uuid");
 
@@ -223,27 +290,6 @@ namespace MiniECommerce.Persistence.Migrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("CartItems");
-                });
-
-            modelBuilder.Entity("MiniECommerce.Domain.Entities.Customer", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("UpdatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Customers");
                 });
 
             modelBuilder.Entity("MiniECommerce.Domain.Entities.File", b =>
@@ -383,9 +429,8 @@ namespace MiniECommerce.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<Guid>("AppUserAddressId")
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("CartId")
                         .HasColumnType("uuid");
@@ -393,22 +438,15 @@ namespace MiniECommerce.Persistence.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("CustomerId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<DateTime>("UpdatedDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AppUserAddressId");
+
                     b.HasIndex("CartId")
                         .IsUnique();
-
-                    b.HasIndex("CustomerId");
 
                     b.ToTable("Orders");
                 });
@@ -443,21 +481,6 @@ namespace MiniECommerce.Persistence.Migrations
                     b.HasIndex("BrandCode");
 
                     b.ToTable("Products");
-                });
-
-            modelBuilder.Entity("OrderProduct", b =>
-                {
-                    b.Property<Guid>("OrdersId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("ProductsId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("OrdersId", "ProductsId");
-
-                    b.HasIndex("ProductsId");
-
-                    b.ToTable("OrderProduct");
                 });
 
             modelBuilder.Entity("ProductProductImageFile", b =>
@@ -565,6 +588,17 @@ namespace MiniECommerce.Persistence.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("MiniECommerce.Domain.Entities.AppUserAddress", b =>
+                {
+                    b.HasOne("MiniECommerce.Domain.Entities.Identity.AppUser", "AppUser")
+                        .WithMany("AppUserAddresses")
+                        .HasForeignKey("AppUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppUser");
+                });
+
             modelBuilder.Entity("MiniECommerce.Domain.Entities.Cart", b =>
                 {
                     b.HasOne("MiniECommerce.Domain.Entities.Identity.AppUser", "User")
@@ -597,21 +631,21 @@ namespace MiniECommerce.Persistence.Migrations
 
             modelBuilder.Entity("MiniECommerce.Domain.Entities.Order", b =>
                 {
+                    b.HasOne("MiniECommerce.Domain.Entities.AppUserAddress", "AppUserAddress")
+                        .WithMany("Orders")
+                        .HasForeignKey("AppUserAddressId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("MiniECommerce.Domain.Entities.Cart", "Cart")
                         .WithOne("Order")
                         .HasForeignKey("MiniECommerce.Domain.Entities.Order", "CartId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MiniECommerce.Domain.Entities.Customer", "Customer")
-                        .WithMany("Orders")
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("AppUserAddress");
 
                     b.Navigation("Cart");
-
-                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("MiniECommerce.Domain.Entities.Product", b =>
@@ -624,21 +658,6 @@ namespace MiniECommerce.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("Brand");
-                });
-
-            modelBuilder.Entity("OrderProduct", b =>
-                {
-                    b.HasOne("MiniECommerce.Domain.Entities.Order", null)
-                        .WithMany()
-                        .HasForeignKey("OrdersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MiniECommerce.Domain.Entities.Product", null)
-                        .WithMany()
-                        .HasForeignKey("ProductsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("ProductProductImageFile", b =>
@@ -656,6 +675,11 @@ namespace MiniECommerce.Persistence.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("MiniECommerce.Domain.Entities.AppUserAddress", b =>
+                {
+                    b.Navigation("Orders");
+                });
+
             modelBuilder.Entity("MiniECommerce.Domain.Entities.Brand", b =>
                 {
                     b.Navigation("Products");
@@ -669,13 +693,10 @@ namespace MiniECommerce.Persistence.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MiniECommerce.Domain.Entities.Customer", b =>
-                {
-                    b.Navigation("Orders");
-                });
-
             modelBuilder.Entity("MiniECommerce.Domain.Entities.Identity.AppUser", b =>
                 {
+                    b.Navigation("AppUserAddresses");
+
                     b.Navigation("Carts");
                 });
 

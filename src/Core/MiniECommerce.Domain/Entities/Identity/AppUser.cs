@@ -12,5 +12,6 @@ namespace MiniECommerce.Domain.Entities.Identity
         public string? RefreshToken { get; set; }
         public DateTime? RefreshTokenEndDate { get; set; }
         public ICollection<Cart> Carts { get; set; }
+        public ICollection<AppUserAddress> AppUserAddresses { get; set; }
     }
 }

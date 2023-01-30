@@ -81,6 +81,7 @@ namespace MiniECommerce.Persistence.Services
 
             return await _cartItemReadRepository.Table
                  .Include(ci => ci.Product)
+                 .ThenInclude(p => p.ProductImageFiles)
                  .Where(ci => ci.CartId == currentCart.Id)
                  .ToListAsync();
         }
@@ -99,6 +100,7 @@ namespace MiniECommerce.Persistence.Services
                     CartId = currentCart.Id,
                     ProductId = Guid.Parse(cartItemDto.ProductId),
                     Quantity = cartItemDto.Quantity,
+                    IsActive = true
                 });
 
             await _cartItemWriteRepository.SaveAsync();
@@ -123,6 +125,7 @@ namespace MiniECommerce.Persistence.Services
             if (cartItem != null)
             {
                 cartItem.Quantity = cartItemDto.Quantity;
+                cartItem.IsActive = cartItemDto.IsActive;
 
                 await _cartItemWriteRepository.SaveAsync();
             }

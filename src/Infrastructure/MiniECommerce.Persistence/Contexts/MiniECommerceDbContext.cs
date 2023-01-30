@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using MiniECommerce.Application.DTOs.NAppUserAddress;
 using MiniECommerce.Domain.Entities;
 using MiniECommerce.Domain.Entities.Common;
 using MiniECommerce.Domain.Entities.Identity;
@@ -19,7 +20,7 @@ namespace MiniECommerce.Persistence.Contexts
 
         public DbSet<Product> Products { get; set; }
         public DbSet<Order> Orders { get; set; }
-        public DbSet<Customer> Customers { get; set; }
+        //public DbSet<Customer> Customers { get; set; }
         public DbSet<Brand> Brands { get; set; }
 
         public DbSet<Domain.Entities.File> Files { get; set; }
@@ -28,6 +29,10 @@ namespace MiniECommerce.Persistence.Contexts
         public DbSet<BrandLogoFile> BrandLogoFiles { get; set; }
         public DbSet<Cart> Carts { get; set; }
         public DbSet<CartItem> CartItems { get; set; }
+        public DbSet<AppUserAddress> AppUserAddresses { get; set; }
+        public DbSet<CityDto> Cities { get; set; }
+        public DbSet<DistrictDto> Districts { get; set; }
+        public DbSet<NeighborhoodDto> Neighborhoods { get; set; }
 
         // Entity'lerimizin bazı property'lerinin otomatik olarak değer atamasını yapmak için merkezi bir yerden müdahele edebiliriz.
         // Böyle bir senaryo için DbContext'in SaveChanges method'ını override ederek bir nevi interceptor yazmış oluyoruz.
